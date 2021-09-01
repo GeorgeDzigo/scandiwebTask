@@ -63,8 +63,7 @@ h3 {
 
 
 /* Switcher */
-
-#size , #dimensions, #weight {
+.size-type {
       display: none;
 }
 

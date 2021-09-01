@@ -1,7 +1,6 @@
 <?php 
-include '../classes/ProductBase.class.php';
+      include '../classes/ProductBase.class.php';
 ?>
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -18,8 +17,8 @@ include '../classes/ProductBase.class.php';
       <header> 
             <h3 style="display: inline;">Product List</h3>
             <div class="funcs">
-                  <a href="./add.php" class="a">Add</a>
-                  <a class="a" onclick="document.getElementById('delete').submit()">Mass Delete</a>
+                  <a href="./add-product.php" class="a">ADD</a>
+                  <a class="a" onclick="document.getElementById('delete').submit()">MASS DELETE</a>
             </div>
       </header>
 
@@ -35,14 +34,14 @@ include '../classes/ProductBase.class.php';
      
      if (count(ProductBaseClass::products()) != 0) 
      {
-      
+      $PBC = new ProductBaseClass();
+      $PBC->__set('products', $PBC->products());
       ?>
       <div class="products">
             <form id="delete" action="<?= $_SERVER['PHP_SELF']?>" method="POST">
                         
-                  <?php foreach(ProductBaseClass::products() as $product) {
+                  <?php foreach($PBC->__get('products') as $product) {
 
-                        $PBC = new ProductBaseClass();
                         $PBC->__set('id', $product['id']);
                         $PBC->__set('sku', $product['sku']);     
                         $PBC->__set('name', $product['name']); 
@@ -50,10 +49,10 @@ include '../classes/ProductBase.class.php';
                         $PBC->__set('type', $product['type']); 
 
                   ?>
-                        <div class="cards d-flex justify-content-center" style="display:inline-block!important">
+                        <div class="cards d-flex justify-content-center" style="display:inline-block !important">
                               <div class="card" style="width: 18rem;">
                                     <div class="card-body">
-                                    <input type="checkbox" value="<?= $PBC->__get('id') ?>" name="id[]">
+                                    <input class="delete-checkbox" type="checkbox" value="<?= $PBC->__get('id') ?>" name="id[]">
                                           <h5 class="card-title text-center"><?= $PBC->__get('sku') ?></h5>
                                           <h5 class="card-title text-center"><?= $PBC->__get('name') ?></h5>
                                     </div>

@@ -107,6 +107,7 @@
 
                   <p id="errors"></p>
                   <p id="size-type-errors"></p>
+
             </div>
       </form>
 
@@ -115,4 +116,5 @@
       <!-- My Scripts -->
       <script src="./js/index.js"></script>
 </body>
+
 </html>

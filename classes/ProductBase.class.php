@@ -1,8 +1,5 @@
 <?php
 require_once '../db.php';
-
-
-
 abstract class MainProductLogic
 {
     abstract public static function create($product);
@@ -14,8 +11,7 @@ class ProductBaseClass extends MainProductLogic
 {
     public static function create($product)
     {
-
-        $product =  array_map(function ($v) {
+        $product = array_map(function ($v) {
             return $v == "" ? null : $v;
         }, $product);
 
@@ -31,17 +27,18 @@ class ProductBaseClass extends MainProductLogic
         $stmt->bindParam(':mb', $product['mb']);
         $stmt->bindParam(':dimension', $dimension);
         $stmt->bindParam(':kg', $product['kg']);
+
         $stmt->execute();
         
-        return header("Location: ./index.php");
+        return header("Location: ./");
     }
 
 
     public static function products()
     {
         $data = [];
-
         $stmt = Connection::db()->query('SELECT * FROM products');
+        
         while($row = $stmt->fetch(PDO::FETCH_ASSOC))
         {
             $row = array_filter($row, function($v) {return $v != null;});
@@ -54,16 +51,12 @@ class ProductBaseClass extends MainProductLogic
 
     public static function delete($products)
     {
-        foreach($products["id"] as $id)
-        {
-            Connection::db()->query("DELETE FROM products WHERE id = " . $id);
-        }
-        return header('Location: ./index.php');
-    } 
-
-
-    /* Setters and Getters */
+        $products = implode(",", $products["id"]);
+        Connection::db()->query("DELETE FROM products WHERE id in ($products)");
+        return header('Location: ./');
+    }
     
+    /* Setters and Getters */
     public function __set($key, $value)
     {
         $this->$key = $value;
