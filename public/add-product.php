@@ -17,8 +17,9 @@
       <?php
       if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             require_once '../classes/ProductBase.class.php';
-            ProductBaseClass::create($_POST);
-      }
+            $create = new ProductBaseClass();
+            $errors = $create->create($_POST);
+            }
       ?>
       <header>
             <h3 style="display: inline;">Product Add</h3>
@@ -37,21 +38,21 @@
                   <div class="form-group row stable-inputs">
                         <label for="sku" class="col-sm-2 col-form-label">SKU</label>
                         <div class="col-sm-10">
-                              <input type="text" class="form-control default-input" id="sku" placeholder="SKU" name="sku">
+                              <input type="text" class="form-control default-input" id="sku" placeholder="SKU" name="sku" value="<?= isset($_POST['sku']) ? $_POST['sku'] : '' ?>">
                         </div>
                   </div>
 
                   <div class="form-group row stable-inputs">
                         <label for="name" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                              <input type="text" class="form-control default-input" id="name" placeholder="Name" name="name">
+                              <input type="text" class="form-control default-input" id="name" placeholder="Name" name="name" value="<?= isset($_POST['name']) ? $_POST['name'] : '' ?>">
                         </div>
                   </div>
 
                   <div class="form-group row stable-inputs">
                         <label for="price" class="col-sm-2 col-form-label">Price ($)</label>
                         <div class="col-sm-10">
-                              <input type="decimal" min="0.00" class="form-control default-input" id="price" placeholder="Price" name="price" value="">
+                              <input type="decimal" min="0.00" class="form-control default-input" id="price" placeholder="Price" name="price" value="<?= isset($_POST['price']) ? $_POST['price'] : '' ?>">
                         </div>
                   </div>
 
@@ -59,20 +60,24 @@
                   <div class="input-group mb-3" style="top: 20px;">
                         <label class="col-sm-2 col-form-label">Type Switcher</label>
 
-                        <select class="sizes-option" id="productType" onchange="show()">
+                        <select class="sizes-option" id="productType" onchange="show()" name="type">
                               <option value="Type_Switcher">Type Switcher</option>
-                              <option value="size">DVD</option>
-                              <option value="weight">Book</option>
-                              <option value="hwl">Furniture</option>
+                              <option value="size" 
+                              <?= isset($_POST['type']) && $_POST['type'] == "size" ? "SELECTED" : '' ?>
+                              >DVD</option>
+                              <option value="weight"
+                              <?= isset($_POST['type']) && $_POST['type'] == "weight" ? "SELECTED" : '' ?>
+                              >Book</option>
+                              <option value="hwl"
+                              <?= isset($_POST['type']) && $_POST['type'] == "hwl" ? "SELECTED" : ''?>
+                              >Furniture</option>
                         </select>
                   </div>
-
-
                   <!-- MB -->
                   <div class="form-group row size-type size">
                         <label for="size-mb" class="col-sm-2 col-form-label">Size (MB)</label>
                         <div class="col-sm-10">
-                              <input type="decimal" class="form-control int" id="size" placeholder="Size" name="mb" >
+                              <input type="decimal" class="form-control int" id="size" placeholder="Size" name="size" value="<?= isset($_POST['size']) ? $_POST['size'] : '' ?>" >
                         </div>
                   </div>
 
@@ -80,7 +85,7 @@
                   <div class="form-group row size-type weight">
                         <label for="weight-kg" class="col-sm-2 col-form-label">Weight (KG)</label>
                         <div class="col-sm-10">
-                              <input type="decimal" class="form-control int" id="weight" placeholder="Weight" name="kg">
+                              <input type="decimal" class="form-control int" id="weight" placeholder="Weight" name="weight" value="<?= isset($_POST['weight']) ? $_POST['weight'] : '' ?>">
                         </div>
                   </div>
                   <!-- CM -->
@@ -88,24 +93,31 @@
                         <div class="form-group row">
                               <label for="height-cm" class="col-sm-2 col-form-label">Height (CM)</label>
                               <div class="col-sm-10">
-                                    <input type="decimal" class="form-control int" id="height" placeholder="Height" name="hcm">
+                                    <input type="decimal" class="form-control int" id="height" placeholder="Height" name="hwl[height]" value="<?= isset($_POST['hwl']) ? $_POST['hwl']['height'] : '' ?>">
                               </div>
                         </div>
                         <div class="form-group row">
                               <label for="width-cm" class="col-sm-2 col-form-label">Width (CM)</label>
                               <div class="col-sm-10">
-                                    <input type="decimal" class="form-control int" id="width" placeholder="Width" name="wcm">
+                                    <input type="decimal" class="form-control int" id="width" placeholder="Width" name="hwl[width]" value="<?= isset($_POST['hwl']) ? $_POST['hwl']['width'] : '' ?>">
                               </div>
                         </div>
                         <div class="form-group row">
                               <label for="length-cm" class="col-sm-2 col-form-label">Length (CM)</label>
                               <div class="col-sm-10">
-                                    <input type="decimal" class="form-control int" id="length" placeholder="Length" name="lcm">
+                                    <input type="decimal" class="form-control int" id="length" placeholder="Length" name="hwl[length]" value="<?= isset($_POST['hwl']) ? $_POST['hwl']['length'] : '' ?>">
                               </div>
                         </div>
                   </div>
 
-                  <p id="errors"></p>
+                  <p id="errors">
+                        <?php
+                              if(isset($errors))
+                                    foreach($errors as $error) 
+                                          echo "<li>" . $error . "</li>";
+
+                        ?>
+                  </p>
                   <p id="size-type-errors"></p>
 
             </div>

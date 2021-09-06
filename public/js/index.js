@@ -1,16 +1,16 @@
 const errorDisplay = document.getElementById("errors");
-const sizeTypeErrors = document.getElementById("size-type-errors");
 
-function show() {
+function show(resetInputs = false) {
       errorDisplay.innerHTML = "";
       var d = document.querySelector(".sizes-option");
       
       var dis = d.options[d.selectedIndex].value;
       let el = document.querySelectorAll(".size-type");
       // Reset all inputs
-      el.forEach(v => {
-            if(v.id != dis) v.querySelectorAll(".int").forEach(x => x.value = "");
-      });
+      if(!resetInputs)
+            el.forEach(v => {
+                  if(v.id != dis) v.querySelectorAll(".int").forEach(x => x.value = "");
+            });
     
       document.querySelectorAll('.size-type').forEach((v) => {
             v.style.display = 'none';
@@ -88,7 +88,6 @@ function priceInputCheck() {
 // This function will submit data if there are no errors
 function submitData() {
       errorDisplay.innerHTML = "";
-      sizeTypeErrors.innerHTML = "";
-
       if (!blankInputsCheck().length && !priceInputCheck().length && !selectedTypeInputsCheck().length) document.getElementById('product_form').submit();
 }
+show(true);

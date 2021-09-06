@@ -2,31 +2,57 @@
 require_once '../db.php';
 abstract class MainProductLogic
 {
-    abstract public static function create($product);
+    abstract public function create($product);
     abstract public static function products();
     abstract public static function delete($id);    
 }
 
 class ProductBaseClass extends MainProductLogic
 {
-    public static function create($product)
+    public function validate($product, $isString = false) {
+        if($isString) return strlen($product) != 0;
+        else return is_numeric($product);
+    }
+
+    public function create($product)
     {
-        $product = array_map(function ($v) {
-            return $v == "" ? null : $v;
-        }, $product);
+        $errors = [];
 
-        $stmt = Connection::db()->prepare("INSERT INTO products (sku, name, price, mb, dimension, kg)
-                                                        VALUES (:sku, :name, :price, :mb, :dimension, :kg)");
+        $errors['sku'] = $this->validate($product['sku'], true);
+        $errors['name'] = $this->validate($product['name'], true);
 
-        $dimension = "{$product['hcm']}x{$product['wcm']}x{$product['lcm']}";
+        $errors['price'] = $this->validate($product['price']);
+        $errors['type'] = $product['type'] != "Type_Switcher";
+
+        if($product['type'] != "Type_Switcher" && gettype($product[$product['type']]) != "string")
+            foreach($product[$product['type']] as $key => $value) $errors[$key] = $this->validate($value);
+
+        else 
+            $errors[$product['type']] = $this->validate($product[$product['type']]);
+
+        $errors = array_filter($errors, function($v) {
+            return !$v;
+        });
+
+        foreach($errors as $key => $value) {
+            $errors[$key] = "Please provide valid " . $key; 
+            $product[$key] = NULL;
+        }
+        if(count($errors) != 0) return $errors;
+
+        $stmt = Connection::db()->prepare("INSERT INTO products (sku, name, price, type, size, hwl, weight)
+                                                        VALUES (:sku, :name, :price, :type, :mb, :dimension, :kg)");
+
+        $dimension = "{$product['hwl']['height']}x{$product['hwl']['weight']}x{$product['hwl']['length']}";
         if(strlen($dimension) == 2) $dimension = null;
-
+        var_dump($product);
         $stmt->bindParam(':sku', $product['sku']);
         $stmt->bindParam(':name', $product['name']);
         $stmt->bindParam(':price', $product['price']);
-        $stmt->bindParam(':mb', $product['mb']);
+        $stmt->bindParam(':type', $product['type']);
+        $stmt->bindParam(':mb', $product['size']);
+        $stmt->bindParam(':kg', $product['weight']);
         $stmt->bindParam(':dimension', $dimension);
-        $stmt->bindParam(':kg', $product['kg']);
 
         $stmt->execute();
         

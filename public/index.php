@@ -57,8 +57,8 @@
                                           <h5 class="card-title text-center"><?= $PBC->__get('name') ?></h5>
                                     </div>
                                     <ul class="list-group list-group-flush">
-                                          <li class="list-group-item text-center prices"><?= $PBC->__get('price') ?></li>
-                                          <li class="list-group-item text-center" style="padding: 0.5rem .4rem !important;"><?= $PBC->__get('type') ?></li>
+                                          <li class="list-group-item text-center prices"><?= $PBC->__get('price') ?>$</li>
+                                          <li class="list-group-item text-center" style="padding: 0.5rem .4rem !important;"><?= $product[$PBC->__get('type')] ?></li>
                                     </ul>
                               </div>
                         </div>
