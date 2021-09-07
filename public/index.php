@@ -40,14 +40,15 @@
       <div class="products">
             <form id="delete" action="<?= $_SERVER['PHP_SELF']?>" method="POST">
                         
-                  <?php foreach($PBC->__get('products') as $product) {
+                  <?php 
+                  foreach($PBC->__get('products') as $product) {
 
                         $PBC->__set('id', $product['id']);
                         $PBC->__set('sku', $product['sku']);     
                         $PBC->__set('name', $product['name']); 
                         $PBC->__set('price', $product['price']); 
                         $PBC->__set('type', $product['type']); 
-
+                        $PBC->__set('type_v', $product[$PBC->__get('type')]);
                   ?>
                         <div class="cards d-flex justify-content-center" style="display:inline-block !important">
                               <div class="card" style="width: 18rem;">
@@ -58,7 +59,7 @@
                                     </div>
                                     <ul class="list-group list-group-flush">
                                           <li class="list-group-item text-center prices"><?= $PBC->__get('price') ?>$</li>
-                                          <li class="list-group-item text-center" style="padding: 0.5rem .4rem !important;"><?= $product[$PBC->__get('type')] ?></li>
+                                          <li class="list-group-item text-center" style="padding: 0.5rem .4rem !important;"><?= $PBC->__get('type_v') ?></li>
                                     </ul>
                               </div>
                         </div>
