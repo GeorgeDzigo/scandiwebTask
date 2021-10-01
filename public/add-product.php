@@ -17,8 +17,15 @@
       <?php
       if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             require_once '../classes/ProductBase.class.php';
-            $create = new ProductBaseClass();
-            $errors = $create->create($_POST);
+            $type = ucfirst($_POST["type"]);
+            if($type != "Hwl" && $type != "Weight" && $type != "Size") header('Location: ./add-product.php');
+            $product = new $type();
+            $product->setProp($_POST[strtolower($type)]);
+            $product->__set("sku", $_POST["sku"]);
+            $product->__set("name", $_POST["name"]);
+            $product->__set("price", $_POST["price"]);
+            $product->__set("type", $_POST["type"]);
+            $product->create();
             }
       ?>
       <header>

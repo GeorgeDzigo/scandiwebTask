@@ -28,27 +28,29 @@
      <?php 
      
      if($_SERVER['REQUEST_METHOD'] == 'POST') {
-           ProductBaseClass::delete($_POST);
+            Product::delete($_POST);
      }
      
      
-     if (count(ProductBaseClass::products()) != 0) 
+     if (count(Product::products()) != 0) 
      {
-      $PBC = new ProductBaseClass();
+      $PBC = new Product();
       $PBC->__set('products', $PBC->products());
       ?>
       <div class="products">
             <form id="delete" action="<?= $_SERVER['PHP_SELF']?>" method="POST">
-                        
+
                   <?php 
                   foreach($PBC->__get('products') as $product) {
-
                         $PBC->__set('id', $product['id']);
                         $PBC->__set('sku', $product['sku']);     
                         $PBC->__set('name', $product['name']); 
                         $PBC->__set('price', $product['price']); 
                         $PBC->__set('type', $product['type']); 
-                        $PBC->__set('type_v', $product[$PBC->__get('type')]);
+                        $type_v = $product[$PBC->__get('type')];
+                        if($product['type'] == "size") $type_v .= "MB";
+                        else if($product['type'] == "weight") $type_v .= "KG";
+                        $PBC->__set('type_v', $type_v);
                   ?>
                         <div class="cards d-flex justify-content-center" style="display:inline-block !important">
                               <div class="card" style="width: 18rem;">

@@ -2,13 +2,19 @@
 require_once '../db.php';
 abstract class MainProductLogic
 {
-    abstract public function create($product);
+    abstract public function create();
     abstract public static function products();
     abstract public static function delete($id);
 }
-
-class ProductBaseClass extends MainProductLogic
+class Product extends MainProductLogic
 {
+    protected $sku;
+    protected $name;
+    protected $price;
+    protected $type;
+    protected $size;
+    protected $weight;
+    protected $hwl;
     protected function validate($product, $isString = false)
     {
         if ($isString) return strlen($product) != 0;
@@ -17,7 +23,6 @@ class ProductBaseClass extends MainProductLogic
     protected function validation($product)
     {
         $errors = [];
-
         $errors['sku'] = $this->validate($product['sku'], true);
         $errors['name'] = $this->validate($product['name'], true);
 
@@ -39,8 +44,12 @@ class ProductBaseClass extends MainProductLogic
         }
         return $errors;
     }
-    public function create($product)
+    public function create()
     {
+        $type = $this->type;
+        $product = ["sku" => $this->sku, "name" => $this->name, "price" => $this->price, "type" => $this->type, $type => $this->$type];
+     
+        
         $errors = $this->validation($product);
         if (count($errors) != 0) return $errors;
 
@@ -48,14 +57,14 @@ class ProductBaseClass extends MainProductLogic
                                                         VALUES (:sku, :name, :price, :type, :mb, :dimension, :kg)");
 
         $dimension = NULL;
-        if ($product['type'] == 'hwl')   $dimension = "{$product['hwl']['height']}x{$product['hwl']['width']}x{$product['hwl']['length']}";
+        if ($this->type == 'hwl')   $dimension = "{$product['hwl']['height']}x{$product['hwl']['width']}x{$product['hwl']['length']}";
 
-        $stmt->bindParam(':sku', $product['sku']);
-        $stmt->bindParam(':name', $product['name']);
-        $stmt->bindParam(':price', $product['price']);
-        $stmt->bindParam(':type', $product['type']);
-        $stmt->bindParam(':mb', $product['size']);
-        $stmt->bindParam(':kg', $product['weight']);
+        $stmt->bindParam(':sku', $this->sku);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':price', $this->price);
+        $stmt->bindParam(':type', $this->type);
+        $stmt->bindParam(':mb', $this->size);
+        $stmt->bindParam(':kg', $this->weight);
         $stmt->bindParam(':dimension', $dimension);
 
         $stmt->execute();
@@ -96,12 +105,21 @@ class ProductBaseClass extends MainProductLogic
     }
 }
 
-class Size extends ProductBaseClass
+class Size extends Product
 {
+    public function setProp($val) { //setProperty
+        $this->__set("size", $val);
+    }
 }
-class Weight extends ProductBaseClass
+class Weight extends Product
 {
+    public function setProp($val) { //setProperty
+        $this->__set("weight", $val);
+    }
 }
-class Hwl extends ProductBaseClass
+class Hwl extends Product
 {
+    public function setProp($val) { //setProperty
+        $this->__set("hwl", $val);
+    }
 }
